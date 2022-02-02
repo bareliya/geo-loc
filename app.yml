@@ -1,0 +1,39 @@
+runmode: dev
+# local configuration
+
+dev:
+    mysql:
+        host: localhost:3306
+        user: root
+        password: mysqlP@ssword
+        database: CMDB_RR_2
+    mongodb:
+        url: mongodb+srv://vector:vector4899@cluster0.nhuyz.mongodb.net/geolocdb?retryWrites=true&w=majority
+        database: geolocdb
+        collecton: geo_loc
+    redis:
+        host: localhost:6379
+        #port: 6379
+        password:
+        database: 0  #int type
+        key: deliveryboy
+    debug: true
+
+# prod configuration
+prod:
+    mysql:
+        host: #cloud host
+        user: # user
+        password: # pass
+        database: CMDB_RR_2
+    mongodb:
+        url: # global mongodb url
+        database: geolocdb
+        collecton: geo_loc
+    redis:
+        host: #cloud host
+        #port: # port
+        password: 
+        database: 0
+        key: deliveryboy
+    debug: true
