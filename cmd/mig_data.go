@@ -45,14 +45,18 @@ var migdata = &cobra.Command{
 		//settign redis connection
 
 		redisClient := redisdb.RedisConnection
-		redisClient.ConnectRedis()
+		err =redisClient.ConnectRedis()
+		if err!=nil{
+			log.Fatal(err)
+            
+		}
 
 		//adding data in redis
 		geolocs := helper.ConverintoGeoLoc(allData)
 
 		for _, geoloc := range geolocs {
 			res := redisClient.AddGeo(&geoloc)
-			log.Println(res)
+			fmt.Println(res)
 
 		}
 		//res:=redisClient.AddGeo(geolocs)
