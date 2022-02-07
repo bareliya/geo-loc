@@ -8,7 +8,7 @@ import (
 
 	"github.com/citymall/geo-loc/helper"
 	"github.com/citymall/geo-loc/util"
-
+	//"github.com/citymall/geo-loc/types"
 	"github.com/go-redis/redis"
 )
 
@@ -21,7 +21,7 @@ type redisConnectionType struct {
 
 var RedisConnection = &redisConnectionType{}
 
-func (r *redisConnectionType) ConnectRedis() {
+func (r *redisConnectionType) ConnectRedis() error{
 	if !r.Connected {
 		log.Println("Connecting redis")
 
@@ -46,7 +46,8 @@ func (r *redisConnectionType) ConnectRedis() {
 
 		res, err := r.Client.Ping().Result()
 		if err != nil || helper.IsEmpty(res) {
-			log.Fatalf("Could not connect to redis %v", err)
+			return err;
+			log.Println("Could not connect to redis %v", err)
 		}
 		log.Println("ping : ", res)
 
@@ -54,10 +55,10 @@ func (r *redisConnectionType) ConnectRedis() {
 
 		log.Println("Already Connected")
 	}
-	return
+	return nil
 }
 
-func (r *redisConnectionType) AddGeo(geolocs *redis.GeoLocation) interface{} {
+func (r *redisConnectionType) AddGeo(geolocs *redis.GeoLocation) *redis.IntCmd {
 	if !r.Connected {
 		r.ConnectRedis()
 	}
@@ -69,14 +70,14 @@ func (r *redisConnectionType) AddGeo(geolocs *redis.GeoLocation) interface{} {
 
 }
 
-func (r *redisConnectionType) GetDeliveryBoysWithinRadSearchDrivers(limit int, lat float64, lng float64, rad float64) []redis.GeoLocation {
+func (r *redisConnectionType) GetDeliveryBoysWithinRadSearchDrivers(limit int, lat float64, lng float64, rad float64) (response []redis.GeoLocation, err error) {
 	if !r.Connected {
 		r.ConnectRedis()
 	}
 	red := util.GetConfig().Redis
 	key := red["key"].(string)
 
-	reposne, err := r.Client.GeoRadius(key, lng, lat, &redis.GeoRadiusQuery{
+	response, err = r.Client.GeoRadius(key, lng, lat, &redis.GeoRadiusQuery{
 		Radius:      rad,
 		Unit:        "km",
 		WithCoord:   true,
@@ -88,11 +89,8 @@ func (r *redisConnectionType) GetDeliveryBoysWithinRadSearchDrivers(limit int, l
 		StoreDist:   "",
 	}).Result()
 
-	if err != nil {
-		log.Fatal(err)
 
-	}
 
-	return reposne
+	return response, err
 
 }

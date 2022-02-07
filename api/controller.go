@@ -8,9 +8,18 @@ import (
 func GetLocationFunction(limit int, longi float64, lati float64, rad float64) (returnData helper.ResponseJSON) {
 
 	redisClient := redisdb.RedisConnection
-	redisClient.ConnectRedis()
+	err:=redisClient.ConnectRedis()
+	if err!=nil{
+		helper.ErrorResponse(&returnData,"redis is not connected")
+		return 
+	}
 
-	response := redisClient.GetDeliveryBoysWithinRadSearchDrivers(limit, lati, longi, rad)
+	response ,err := redisClient.GetDeliveryBoysWithinRadSearchDrivers(limit, lati, longi, rad)
+	if err!=nil{
+		helper.ErrorResponse(&returnData,err.Error())
+		return 
+	}
+	
 	helper.SuccessResponse(&returnData, response)
 	return
 }

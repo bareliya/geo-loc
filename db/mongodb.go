@@ -21,7 +21,7 @@ type mongodbConnectionType struct {
 
 var MongoDbConnection = &mongodbConnectionType{}
 
-func (db *mongodbConnectionType) ConnectMongodb() {
+func (db *mongodbConnectionType) ConnectMongodb() error{
 
 	if !db.isconnected {
 		mongodb := util.GetConfig().Mongodb
@@ -30,7 +30,8 @@ func (db *mongodbConnectionType) ConnectMongodb() {
 
 		client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(host))
 		if err != nil {
-			log.Fatal(err)
+			return err
+			//log.Fatal(err)
 		}
 
 		// defer func() {
@@ -45,6 +46,7 @@ func (db *mongodbConnectionType) ConnectMongodb() {
 	} else {
 		// Do Nothing
 	}
+	return nil
 }
 
 func (db *mongodbConnectionType) CloseConnection() {

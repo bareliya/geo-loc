@@ -47,4 +47,17 @@ type BulkRedisInput struct {
 }
 
 
+type baseCmd struct {
+	_args []interface{}
+	err   error
+
+	_readTimeout *time.Duration
+}
+
+type IntCmd struct {
+	baseCmd
+
+	val int64
+}
+
 
